@@ -34,6 +34,7 @@ public class ExceptionHandlingMiddleware
                 AuthenticationException => (StatusCodes.Status401Unauthorized, "Authentication Failed"),
                 TenantMismatchException => (StatusCodes.Status403Forbidden, "Forbidden"),
                 TenantRequiredException => (StatusCodes.Status400BadRequest, "Tenant Required"),
+                UsageLimitExceededException => (StatusCodes.Status402PaymentRequired, "Usage Limit Exceeded"),
                 _ => (StatusCodes.Status500InternalServerError, "Internal Server Error"),
             };
 

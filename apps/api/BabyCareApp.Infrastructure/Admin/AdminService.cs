@@ -106,6 +106,7 @@ public class AdminService : IAdminService
             MaxLearners = request.MaxLearners,
             MaxTeachers = request.MaxTeachers,
             MaxBranches = request.MaxBranches,
+            TrialDays = request.TrialDays,
             FeatureFlags = request.FeatureFlags,
             IsActive = true,
         };
@@ -132,6 +133,7 @@ public class AdminService : IAdminService
         plan.MaxLearners = request.MaxLearners;
         plan.MaxTeachers = request.MaxTeachers;
         plan.MaxBranches = request.MaxBranches;
+        plan.TrialDays = request.TrialDays;
         plan.FeatureFlags = request.FeatureFlags;
         plan.IsActive = request.IsActive;
 
@@ -229,5 +231,5 @@ public class AdminService : IAdminService
 
     private static SubscriptionPlanResponse ToPlanResponse(SubscriptionPlan plan) => new(
         plan.Id, plan.Name, plan.Tier, plan.MonthlyPrice, plan.AnnualPrice,
-        plan.MaxLearners, plan.MaxTeachers, plan.MaxBranches, plan.FeatureFlags, plan.IsActive);
+        plan.MaxLearners, plan.MaxTeachers, plan.MaxBranches, plan.TrialDays, plan.FeatureFlags, plan.IsActive);
 }

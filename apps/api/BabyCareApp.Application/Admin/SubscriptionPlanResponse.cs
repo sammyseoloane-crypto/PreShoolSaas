@@ -11,5 +11,6 @@ public record SubscriptionPlanResponse(
     int? MaxLearners,
     int? MaxTeachers,
     int? MaxBranches,
+    int TrialDays,
     string[] FeatureFlags,
     bool IsActive);

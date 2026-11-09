@@ -2,6 +2,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using BabyCareApp.Application.Abstractions;
 using BabyCareApp.Application.Exceptions;
+using BabyCareApp.Application.Subscriptions;
 using BabyCareApp.Application.Tenancy;
 using BabyCareApp.Domain.Entities;
 using BabyCareApp.Domain.Enums;
@@ -16,12 +17,15 @@ public partial class TenantService : ITenantService
     private readonly ApplicationDbContext _db;
     private readonly ITenantContext _tenantContext;
     private readonly IAuditLogger _auditLogger;
+    private readonly ISubscriptionService _subscriptionService;
 
-    public TenantService(ApplicationDbContext db, ITenantContext tenantContext, IAuditLogger auditLogger)
+    public TenantService(
+        ApplicationDbContext db, ITenantContext tenantContext, IAuditLogger auditLogger, ISubscriptionService subscriptionService)
     {
         _db = db;
         _tenantContext = tenantContext;
         _auditLogger = auditLogger;
+        _subscriptionService = subscriptionService;
     }
 
     public async Task<TenantResponse> RegisterTenantAsync(
@@ -116,7 +120,20 @@ public partial class TenantService : ITenantService
     public async Task<BranchResponse> CreateBranchAsync(
         CreateBranchRequest request, CancellationToken cancellationToken = default)
     {
-        RequireTenantId();
+        var tenantId = RequireTenantId();
+
+        // Null means no Trialing/Active/PastDue subscription is in effect — preserves
+        // pre-Slice-7 behavior (unlimited) for tenants that haven't subscribed to a plan yet.
+        var limits = await _subscriptionService.GetEffectiveLimitsAsync(tenantId, cancellationToken);
+        if (limits?.MaxBranches is int maxBranches)
+        {
+            var currentCount = await _db.Branches.CountAsync(b => b.TenantId == tenantId, cancellationToken);
+            if (currentCount >= maxBranches)
+            {
+                throw new UsageLimitExceededException(
+                    $"Your current subscription plan allows up to {maxBranches} branches. Upgrade to add more.");
+            }
+        }
 
         var branch = new Branch { Name = request.Name.Trim(), IsActive = true };
         _db.Branches.Add(branch);

@@ -21,5 +21,8 @@ public class CreateSubscriptionPlanRequest
     public int? MaxTeachers { get; set; }
     public int? MaxBranches { get; set; }
 
+    [Range(0, 365)]
+    public int TrialDays { get; set; } = 14;
+
     public string[] FeatureFlags { get; set; } = [];
 }

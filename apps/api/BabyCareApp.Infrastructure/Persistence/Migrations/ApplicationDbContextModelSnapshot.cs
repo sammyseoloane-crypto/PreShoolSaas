@@ -187,6 +187,20 @@ namespace BabyCareApp.Infrastructure.Persistence.Migrations
                             Category = "Tenant",
                             Description = "Create and update the organisation's branches.",
                             Key = "branches.write"
+                        },
+                        new
+                        {
+                            Id = new Guid("00000000-0000-0000-0000-000000000105"),
+                            Category = "Subscription",
+                            Description = "View the organisation's own SaaS subscription.",
+                            Key = "subscription.read"
+                        },
+                        new
+                        {
+                            Id = new Guid("00000000-0000-0000-0000-000000000106"),
+                            Category = "Subscription",
+                            Description = "Subscribe, change plan, or cancel the organisation's own SaaS subscription.",
+                            Key = "subscription.write"
                         });
                 });
 
@@ -343,6 +357,16 @@ namespace BabyCareApp.Infrastructure.Persistence.Migrations
                         {
                             RoleId = new Guid("00000000-0000-0000-0000-000000000003"),
                             PermissionId = new Guid("00000000-0000-0000-0000-000000000103")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("00000000-0000-0000-0000-000000000002"),
+                            PermissionId = new Guid("00000000-0000-0000-0000-000000000105")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("00000000-0000-0000-0000-000000000002"),
+                            PermissionId = new Guid("00000000-0000-0000-0000-000000000106")
                         });
                 });
 
@@ -437,6 +461,9 @@ namespace BabyCareApp.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("character varying(30)");
+
+                    b.Property<int>("TrialDays")
+                        .HasColumnType("integer");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");

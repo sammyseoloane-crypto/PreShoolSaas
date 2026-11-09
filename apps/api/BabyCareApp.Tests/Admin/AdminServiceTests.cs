@@ -6,6 +6,7 @@ using BabyCareApp.Domain.Enums;
 using BabyCareApp.Infrastructure.Admin;
 using BabyCareApp.Infrastructure.Audit;
 using BabyCareApp.Infrastructure.Persistence;
+using BabyCareApp.Infrastructure.Subscriptions;
 using BabyCareApp.Infrastructure.Tenancy;
 using BabyCareApp.Tests.TestDoubles;
 using Microsoft.EntityFrameworkCore;
@@ -28,7 +29,8 @@ public class AdminServiceTests
         db.Database.EnsureCreated();
 
         var auditLogger = new AuditLogger(db);
-        var tenantService = new TenantService(db, tenantContext, auditLogger);
+        var subscriptionService = new SubscriptionService(db, tenantContext, currentUser, auditLogger);
+        var tenantService = new TenantService(db, tenantContext, auditLogger, subscriptionService);
         var adminService = new AdminService(db, auditLogger, currentUser);
 
         return (adminService, tenantService, db, currentUser);

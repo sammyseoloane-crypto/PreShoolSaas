@@ -2,12 +2,14 @@ using BabyCareApp.Application.Abstractions;
 using BabyCareApp.Application.Admin;
 using BabyCareApp.Application.Authorization;
 using BabyCareApp.Application.Auth;
+using BabyCareApp.Application.Subscriptions;
 using BabyCareApp.Application.Tenancy;
 using BabyCareApp.Infrastructure.Admin;
 using BabyCareApp.Infrastructure.Audit;
 using BabyCareApp.Infrastructure.Auth;
 using BabyCareApp.Infrastructure.Authorization;
 using BabyCareApp.Infrastructure.Persistence;
+using BabyCareApp.Infrastructure.Subscriptions;
 using BabyCareApp.Infrastructure.Tenancy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -34,10 +36,11 @@ public static class DependencyInjection
         services.AddSingleton<IJwtTokenService, JwtTokenService>();
         services.AddSingleton<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IAuthService, AuthService>();
-        services.AddScoped<ITenantService, TenantService>();
         services.AddScoped<IPermissionService, PermissionService>();
         services.AddScoped<IAuditLogger, AuditLogger>();
         services.AddScoped<IAdminService, AdminService>();
+        services.AddScoped<ISubscriptionService, SubscriptionService>();
+        services.AddScoped<ITenantService, TenantService>();
 
         return services;
     }

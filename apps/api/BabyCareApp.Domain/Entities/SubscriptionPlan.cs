@@ -14,6 +14,7 @@ public class SubscriptionPlan : IAuditableEntity
     public int? MaxLearners { get; set; }
     public int? MaxTeachers { get; set; }
     public int? MaxBranches { get; set; }
+    public int TrialDays { get; set; } = 14;
     public string[] FeatureFlags { get; set; } = Array.Empty<string>();
     public bool IsActive { get; set; } = true;
     public DateTimeOffset CreatedAt { get; set; }
