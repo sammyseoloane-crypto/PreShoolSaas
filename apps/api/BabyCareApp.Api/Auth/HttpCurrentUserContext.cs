@@ -22,4 +22,7 @@ public class HttpCurrentUserContext : ICurrentUserContext
             return Guid.TryParse(subClaim, out var userId) ? userId : null;
         }
     }
+
+    public bool IsPlatformSuperAdmin =>
+        _httpContextAccessor.HttpContext?.User.FindFirst("is_platform_super_admin")?.Value == bool.TrueString;
 }

@@ -4,4 +4,6 @@ namespace BabyCareApp.Application.Abstractions;
 public interface ICurrentUserContext
 {
     Guid? UserId { get; }
+
+    bool IsPlatformSuperAdmin { get; }
 }

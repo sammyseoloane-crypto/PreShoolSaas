@@ -1,6 +1,7 @@
 using BabyCareApp.Application.Exceptions;
 using BabyCareApp.Application.Tenancy;
 using BabyCareApp.Domain.Enums;
+using BabyCareApp.Infrastructure.Audit;
 using BabyCareApp.Infrastructure.Persistence;
 using BabyCareApp.Infrastructure.Persistence.Configurations;
 using BabyCareApp.Infrastructure.Tenancy;
@@ -21,7 +22,7 @@ public class TenantServiceTests
         var tenantContext = new FakeTenantContext();
         var db = new ApplicationDbContext(options, tenantContext);
         db.Database.EnsureCreated(); // applies HasData seed rows (e.g. system roles) — not automatic on InMemory
-        var service = new TenantService(db, tenantContext);
+        var service = new TenantService(db, tenantContext, new AuditLogger(db));
 
         return (service, db, tenantContext);
     }
@@ -106,30 +107,6 @@ public class TenantServiceTests
         var updated = await service.UpdateCurrentTenantAsync(new UpdateTenantRequest { Name = "New Name" });
 
         Assert.Equal("New Name", updated.Name);
-    }
-
-    [Fact]
-    public async Task ActivateTenant_SetsStatusToActive()
-    {
-        var (service, db, _) = CreateService();
-        var tenant = await service.RegisterTenantAsync(Guid.NewGuid(), new RegisterTenantRequest { Name = "Pending School" });
-
-        await service.ActivateTenantAsync(tenant.Id);
-
-        var reloaded = await db.Tenants.SingleAsync(t => t.Id == tenant.Id);
-        Assert.Equal(TenantStatus.Active, reloaded.Status);
-    }
-
-    [Fact]
-    public async Task SuspendTenant_SetsStatusToSuspended()
-    {
-        var (service, db, _) = CreateService();
-        var tenant = await service.RegisterTenantAsync(Guid.NewGuid(), new RegisterTenantRequest { Name = "Naughty School" });
-
-        await service.SuspendTenantAsync(tenant.Id);
-
-        var reloaded = await db.Tenants.SingleAsync(t => t.Id == tenant.Id);
-        Assert.Equal(TenantStatus.Suspended, reloaded.Status);
     }
 
     [Fact]

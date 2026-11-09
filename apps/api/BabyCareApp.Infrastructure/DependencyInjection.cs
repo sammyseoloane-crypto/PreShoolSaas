@@ -1,7 +1,10 @@
 using BabyCareApp.Application.Abstractions;
+using BabyCareApp.Application.Admin;
 using BabyCareApp.Application.Authorization;
 using BabyCareApp.Application.Auth;
 using BabyCareApp.Application.Tenancy;
+using BabyCareApp.Infrastructure.Admin;
+using BabyCareApp.Infrastructure.Audit;
 using BabyCareApp.Infrastructure.Auth;
 using BabyCareApp.Infrastructure.Authorization;
 using BabyCareApp.Infrastructure.Persistence;
@@ -33,6 +36,8 @@ public static class DependencyInjection
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ITenantService, TenantService>();
         services.AddScoped<IPermissionService, PermissionService>();
+        services.AddScoped<IAuditLogger, AuditLogger>();
+        services.AddScoped<IAdminService, AdminService>();
 
         return services;
     }

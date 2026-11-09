@@ -15,11 +15,13 @@ public partial class TenantService : ITenantService
 {
     private readonly ApplicationDbContext _db;
     private readonly ITenantContext _tenantContext;
+    private readonly IAuditLogger _auditLogger;
 
-    public TenantService(ApplicationDbContext db, ITenantContext tenantContext)
+    public TenantService(ApplicationDbContext db, ITenantContext tenantContext, IAuditLogger auditLogger)
     {
         _db = db;
         _tenantContext = tenantContext;
+        _auditLogger = auditLogger;
     }
 
     public async Task<TenantResponse> RegisterTenantAsync(
@@ -60,6 +62,10 @@ public partial class TenantService : ITenantService
 
         await _db.SaveChangesAsync(cancellationToken);
 
+        await _auditLogger.LogAsync(
+            "tenant.registered", nameof(Tenant), tenant.Id, tenant.Id, ownerUserId,
+            metadata: new { tenant.Name, tenant.Slug }, cancellationToken);
+
         return ToResponse(tenant);
     }
 
@@ -95,24 +101,6 @@ public partial class TenantService : ITenantService
         await _db.SaveChangesAsync(cancellationToken);
 
         return ToResponse(tenant);
-    }
-
-    public async Task ActivateTenantAsync(Guid tenantId, CancellationToken cancellationToken = default)
-    {
-        var tenant = await _db.Tenants.FindAsync([tenantId], cancellationToken)
-            ?? throw new NotFoundException("Tenant not found.");
-
-        tenant.Status = TenantStatus.Active;
-        await _db.SaveChangesAsync(cancellationToken);
-    }
-
-    public async Task SuspendTenantAsync(Guid tenantId, CancellationToken cancellationToken = default)
-    {
-        var tenant = await _db.Tenants.FindAsync([tenantId], cancellationToken)
-            ?? throw new NotFoundException("Tenant not found.");
-
-        tenant.Status = TenantStatus.Suspended;
-        await _db.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<IReadOnlyList<BranchResponse>> ListBranchesAsync(CancellationToken cancellationToken = default)

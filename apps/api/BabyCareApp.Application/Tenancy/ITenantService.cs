@@ -16,11 +16,6 @@ public interface ITenantService
 
     Task<TenantResponse> UpdateCurrentTenantAsync(UpdateTenantRequest request, CancellationToken cancellationToken = default);
 
-    /// <summary>Platform Super Admin only — not gated here, the caller enforces the policy.</summary>
-    Task ActivateTenantAsync(Guid tenantId, CancellationToken cancellationToken = default);
-
-    Task SuspendTenantAsync(Guid tenantId, CancellationToken cancellationToken = default);
-
     Task<IReadOnlyList<BranchResponse>> ListBranchesAsync(CancellationToken cancellationToken = default);
 
     Task<BranchResponse> CreateBranchAsync(CreateBranchRequest request, CancellationToken cancellationToken = default);
