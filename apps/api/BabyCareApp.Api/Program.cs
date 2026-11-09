@@ -1,10 +1,12 @@
 using System.Text;
 using BabyCareApp.Api.Auth;
+using BabyCareApp.Api.Authorization;
 using BabyCareApp.Api.Middleware;
 using BabyCareApp.Api.Tenancy;
 using BabyCareApp.Application.Abstractions;
 using BabyCareApp.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -64,6 +66,8 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("PlatformSuperAdmin", policy =>
         policy.RequireClaim("is_platform_super_admin", bool.TrueString));
 });
+builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
 
 var app = builder.Build();
 

@@ -1,4 +1,5 @@
 using BabyCareApp.Application.Abstractions;
+using BabyCareApp.Application.Authorization;
 using BabyCareApp.Application.Exceptions;
 using BabyCareApp.Application.Tenancy;
 using Microsoft.AspNetCore.Authorization;
@@ -12,12 +13,20 @@ namespace BabyCareApp.Api.Controllers;
 public class TenantsController : ControllerBase
 {
     private readonly ITenantService _tenantService;
+    private readonly IPermissionService _permissionService;
     private readonly ICurrentUserContext _currentUserContext;
+    private readonly ITenantContext _tenantContext;
 
-    public TenantsController(ITenantService tenantService, ICurrentUserContext currentUserContext)
+    public TenantsController(
+        ITenantService tenantService,
+        IPermissionService permissionService,
+        ICurrentUserContext currentUserContext,
+        ITenantContext tenantContext)
     {
         _tenantService = tenantService;
+        _permissionService = permissionService;
         _currentUserContext = currentUserContext;
+        _tenantContext = tenantContext;
     }
 
     [HttpPost]
@@ -37,6 +46,7 @@ public class TenantsController : ControllerBase
     }
 
     [HttpGet("current")]
+    [Authorize(Policy = "Permission:tenants.read")]
     public async Task<ActionResult<TenantResponse>> GetCurrent(CancellationToken cancellationToken)
     {
         var tenant = await _tenantService.GetCurrentTenantAsync(cancellationToken);
@@ -44,10 +54,27 @@ public class TenantsController : ControllerBase
     }
 
     [HttpPut("current")]
+    [Authorize(Policy = "Permission:tenants.write")]
     public async Task<ActionResult<TenantResponse>> UpdateCurrent(UpdateTenantRequest request, CancellationToken cancellationToken)
     {
         var tenant = await _tenantService.UpdateCurrentTenantAsync(request, cancellationToken);
         return Ok(tenant);
+    }
+
+    /// <summary>
+    /// The caller's effective permissions for the resolved tenant — for the frontend to
+    /// fetch at login/tenant-switch and drive UI. Never the enforcement boundary itself;
+    /// every protected endpoint re-checks via PermissionAuthorizationHandler regardless.
+    /// </summary>
+    [HttpGet("current/permissions")]
+    public async Task<ActionResult<IReadOnlyList<string>>> GetCurrentPermissions(CancellationToken cancellationToken)
+    {
+        var userId = RequireCurrentUserId();
+        var tenantId = _tenantContext.TenantId
+            ?? throw new TenantRequiredException("Send a valid X-Tenant-Id header for a tenant you belong to.");
+
+        var permissions = await _permissionService.GetEffectivePermissionsAsync(userId, tenantId, cancellationToken);
+        return Ok(permissions);
     }
 
     private Guid RequireCurrentUserId() =>

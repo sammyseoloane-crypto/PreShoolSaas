@@ -1,7 +1,9 @@
 using BabyCareApp.Application.Abstractions;
+using BabyCareApp.Application.Authorization;
 using BabyCareApp.Application.Auth;
 using BabyCareApp.Application.Tenancy;
 using BabyCareApp.Infrastructure.Auth;
+using BabyCareApp.Infrastructure.Authorization;
 using BabyCareApp.Infrastructure.Persistence;
 using BabyCareApp.Infrastructure.Tenancy;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +32,7 @@ public static class DependencyInjection
         services.AddSingleton<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ITenantService, TenantService>();
+        services.AddScoped<IPermissionService, PermissionService>();
 
         return services;
     }

@@ -17,6 +17,7 @@ public class BranchesController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Policy = "Permission:branches.read")]
     public async Task<ActionResult<IReadOnlyList<BranchResponse>>> List(CancellationToken cancellationToken)
     {
         var branches = await _tenantService.ListBranchesAsync(cancellationToken);
@@ -24,6 +25,7 @@ public class BranchesController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Policy = "Permission:branches.write")]
     public async Task<ActionResult<BranchResponse>> Create(CreateBranchRequest request, CancellationToken cancellationToken)
     {
         var branch = await _tenantService.CreateBranchAsync(request, cancellationToken);
@@ -31,6 +33,7 @@ public class BranchesController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
+    [Authorize(Policy = "Permission:branches.read")]
     public async Task<ActionResult<BranchResponse>> Get(Guid id, CancellationToken cancellationToken)
     {
         var branch = await _tenantService.GetBranchAsync(id, cancellationToken);
@@ -38,6 +41,7 @@ public class BranchesController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
+    [Authorize(Policy = "Permission:branches.write")]
     public async Task<ActionResult<BranchResponse>> Update(Guid id, UpdateBranchRequest request, CancellationToken cancellationToken)
     {
         var branch = await _tenantService.UpdateBranchAsync(id, request, cancellationToken);

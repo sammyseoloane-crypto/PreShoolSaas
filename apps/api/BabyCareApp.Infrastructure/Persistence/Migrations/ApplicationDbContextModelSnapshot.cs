@@ -158,6 +158,36 @@ namespace BabyCareApp.Infrastructure.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("permissions", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("00000000-0000-0000-0000-000000000101"),
+                            Category = "Tenant",
+                            Description = "View the organisation's own tenant settings.",
+                            Key = "tenants.read"
+                        },
+                        new
+                        {
+                            Id = new Guid("00000000-0000-0000-0000-000000000102"),
+                            Category = "Tenant",
+                            Description = "Update the organisation's own tenant settings.",
+                            Key = "tenants.write"
+                        },
+                        new
+                        {
+                            Id = new Guid("00000000-0000-0000-0000-000000000103"),
+                            Category = "Tenant",
+                            Description = "View the organisation's branches.",
+                            Key = "branches.read"
+                        },
+                        new
+                        {
+                            Id = new Guid("00000000-0000-0000-0000-000000000104"),
+                            Category = "Tenant",
+                            Description = "Create and update the organisation's branches.",
+                            Key = "branches.write"
+                        });
                 });
 
             modelBuilder.Entity("BabyCareApp.Domain.Entities.RefreshToken", b =>
@@ -282,6 +312,38 @@ namespace BabyCareApp.Infrastructure.Persistence.Migrations
                     b.HasIndex("PermissionId");
 
                     b.ToTable("role_permissions", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            RoleId = new Guid("00000000-0000-0000-0000-000000000002"),
+                            PermissionId = new Guid("00000000-0000-0000-0000-000000000101")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("00000000-0000-0000-0000-000000000002"),
+                            PermissionId = new Guid("00000000-0000-0000-0000-000000000102")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("00000000-0000-0000-0000-000000000002"),
+                            PermissionId = new Guid("00000000-0000-0000-0000-000000000103")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("00000000-0000-0000-0000-000000000002"),
+                            PermissionId = new Guid("00000000-0000-0000-0000-000000000104")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("00000000-0000-0000-0000-000000000003"),
+                            PermissionId = new Guid("00000000-0000-0000-0000-000000000101")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("00000000-0000-0000-0000-000000000003"),
+                            PermissionId = new Guid("00000000-0000-0000-0000-000000000103")
+                        });
                 });
 
             modelBuilder.Entity("BabyCareApp.Domain.Entities.Subscription", b =>
