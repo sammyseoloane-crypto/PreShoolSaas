@@ -1,6 +1,7 @@
 # BabyCareApp — Solution Architecture (Slice 1)
 
-Status: DRAFT — pending approval. No implementation code, migrations, or packages have been introduced yet.
+Status: Slice 1 (architecture) and Slice 2 (database foundation) complete. See
+Slice 2 completion report in the project history for implementation detail.
 
 ## 0. Context
 
@@ -162,22 +163,17 @@ unit-tested without a database, and keeps EF Core out of the domain layer.
   (simpler, cheaper for an early-stage SaaS). Recommendation: Render or Fly.io for now given this
   is a new project with no existing Azure footprint — but this carries ongoing cost and account
   setup, so it's the product owner's call, not mine to make unilaterally.
-- **Database**: PostgreSQL — **hosting provider not yet chosen**. Candidates: Supabase (the
-  master spec explicitly prefers preserving an existing Supabase environment if one exists; none
-  exists here, but Supabase remains a reasonable default since it bundles managed Postgres +
-  connection pooling + an easy RLS-friendly setup), or a managed Postgres instance from whichever
-  provider hosts the API. Recommendation: Supabase, unless there's a reason to co-locate DB and
-  API with one provider.
+- **Database**: PostgreSQL via **Supabase** (project ref `qkgvojqzobeeyrzncwjs`), confirmed by the
+  product owner.
+- **API host**: Render or Fly.io, confirmed by the product owner (specific provider/account setup
+  still to be done when the API is first deployed, outside Slice 2's scope).
 - Environments: `production` from the start; a `staging` environment is recommended before
   onboarding real schools, but is not a blocker for early slices.
 
-## Open Decisions (need product-owner input before Slice 2)
-
-1. API hosting provider (Azure App Service / Render / Fly.io / other).
-2. PostgreSQL hosting provider (Supabase / other managed Postgres).
-
 ## Completion Status
 
-**COMPLETE AND VERIFIED** for Slice 1 scope (architecture documentation only). No code,
-migrations, or packages were introduced. Awaiting approval to proceed to Slice 2 (Database
-Foundation), plus answers to the two open decisions above.
+**COMPLETE AND VERIFIED** for Slice 1 (architecture documentation) and Slice 2 (database
+foundation schema + tenant isolation — see Slice 2 completion report). Both infrastructure
+decisions from the original "Open Decisions" list have been confirmed by the product owner.
+Migrations have not yet been applied to the live Supabase database — pending the DB password,
+to be set locally via `dotnet user-secrets`, never committed to the repo.

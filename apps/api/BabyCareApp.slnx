@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="BabyCareApp.Api/BabyCareApp.Api.csproj" />
+  <Project Path="BabyCareApp.Application/BabyCareApp.Application.csproj" />
+  <Project Path="BabyCareApp.Domain/BabyCareApp.Domain.csproj" />
+  <Project Path="BabyCareApp.Infrastructure/BabyCareApp.Infrastructure.csproj" />
+  <Project Path="BabyCareApp.Tests/BabyCareApp.Tests.csproj" />
+</Solution>
