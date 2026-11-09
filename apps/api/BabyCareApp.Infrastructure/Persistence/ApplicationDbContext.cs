@@ -34,6 +34,28 @@ public class ApplicationDbContext : DbContext
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
     }
 
+    /// <summary>
+    /// Only needed when bootstrapping a brand-new tenant: at that point
+    /// <see cref="ITenantContext"/> is still null (no tenant exists yet to resolve), so
+    /// TenantConnectionInterceptor set the session's `app.tenant_id` to empty on connection
+    /// open — which means the RLS policies' WITH CHECK clause (defaulted from USING) would
+    /// reject the very first INSERT of the new tenant's own Branch/TenantMembership rows.
+    /// This overrides the session variable for the rest of the connection's lifetime so
+    /// those inserts pass. Only meaningful on a relational provider; a no-op otherwise so
+    /// it's safe to call unconditionally from tests running on the InMemory provider.
+    /// </summary>
+    public async Task SetSessionTenantIdAsync(Guid tenantId, CancellationToken cancellationToken = default)
+    {
+        if (!Database.IsRelational())
+        {
+            return;
+        }
+
+        await Database.OpenConnectionAsync(cancellationToken);
+        await Database.ExecuteSqlInterpolatedAsync(
+            $"SELECT set_config('app.tenant_id', {tenantId.ToString()}, false);", cancellationToken);
+    }
+
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         ApplyAuditingAndTenantRules();

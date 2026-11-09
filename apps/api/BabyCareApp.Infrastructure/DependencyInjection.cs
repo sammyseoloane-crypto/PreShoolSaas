@@ -1,5 +1,6 @@
 using BabyCareApp.Application.Abstractions;
 using BabyCareApp.Application.Auth;
+using BabyCareApp.Application.Tenancy;
 using BabyCareApp.Infrastructure.Auth;
 using BabyCareApp.Infrastructure.Persistence;
 using BabyCareApp.Infrastructure.Tenancy;
@@ -16,8 +17,8 @@ public static class DependencyInjection
         var connectionString = configuration.GetConnectionString("Postgres")
             ?? throw new InvalidOperationException("Missing 'ConnectionStrings:Postgres' configuration value.");
 
-        // Replaced by an HTTP-request-scoped implementation in Slice 4 (Tenant Management).
-        services.AddScoped<ITenantContext, NullTenantContext>();
+        // ITenantContext is registered by the Api layer (HttpTenantContext, Slice 4) —
+        // Infrastructure only needs the interceptor that reads it.
         services.AddScoped<TenantConnectionInterceptor>();
 
         services.AddDbContext<ApplicationDbContext>((sp, options) =>
@@ -28,6 +29,7 @@ public static class DependencyInjection
         services.AddSingleton<IJwtTokenService, JwtTokenService>();
         services.AddSingleton<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<ITenantService, TenantService>();
 
         return services;
     }

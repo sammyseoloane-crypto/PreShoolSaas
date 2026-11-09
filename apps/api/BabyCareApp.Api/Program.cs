@@ -1,6 +1,7 @@
 using System.Text;
 using BabyCareApp.Api.Auth;
 using BabyCareApp.Api.Middleware;
+using BabyCareApp.Api.Tenancy;
 using BabyCareApp.Application.Abstractions;
 using BabyCareApp.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -38,6 +39,7 @@ builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUserContext, HttpCurrentUserContext>();
+builder.Services.AddScoped<ITenantContext, HttpTenantContext>();
 
 var jwtSection = builder.Configuration.GetSection("Jwt");
 builder.Services
@@ -57,7 +59,11 @@ builder.Services
         };
     });
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("PlatformSuperAdmin", policy =>
+        policy.RequireClaim("is_platform_super_admin", bool.TrueString));
+});
 
 var app = builder.Build();
 
@@ -73,6 +79,7 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
+app.UseMiddleware<TenantResolutionMiddleware>();
 app.UseAuthorization();
 
 app.MapControllers();

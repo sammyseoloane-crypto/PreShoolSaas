@@ -19,6 +19,7 @@ public class AuthServiceTests
             .Options;
 
         var db = new ApplicationDbContext(options, new FakeTenantContext());
+        db.Database.EnsureCreated(); // applies HasData seed rows — not automatic on InMemory
 
         var jwtOptions = Options.Create(new JwtOptions
         {

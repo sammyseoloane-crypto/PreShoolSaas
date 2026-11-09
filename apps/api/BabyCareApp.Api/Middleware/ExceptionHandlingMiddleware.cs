@@ -33,6 +33,7 @@ public class ExceptionHandlingMiddleware
                 ConflictException => (StatusCodes.Status409Conflict, "Conflict"),
                 AuthenticationException => (StatusCodes.Status401Unauthorized, "Authentication Failed"),
                 TenantMismatchException => (StatusCodes.Status403Forbidden, "Forbidden"),
+                TenantRequiredException => (StatusCodes.Status400BadRequest, "Tenant Required"),
                 _ => (StatusCodes.Status500InternalServerError, "Internal Server Error"),
             };
 

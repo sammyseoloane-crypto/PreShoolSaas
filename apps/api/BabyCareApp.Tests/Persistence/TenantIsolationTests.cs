@@ -23,7 +23,9 @@ public class TenantIsolationTests
             .UseInMemoryDatabase(Guid.NewGuid().ToString())
             .Options;
 
-        return new ApplicationDbContext(options, tenantContext);
+        var db = new ApplicationDbContext(options, tenantContext);
+        db.Database.EnsureCreated(); // applies HasData seed rows — not automatic on InMemory
+        return db;
     }
 
     [Fact]
