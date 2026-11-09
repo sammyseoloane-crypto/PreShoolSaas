@@ -2,6 +2,7 @@ using BabyCareApp.Application.Abstractions;
 using BabyCareApp.Application.Admin;
 using BabyCareApp.Application.Authorization;
 using BabyCareApp.Application.Auth;
+using BabyCareApp.Application.Preschool;
 using BabyCareApp.Application.Subscriptions;
 using BabyCareApp.Application.Tenancy;
 using BabyCareApp.Infrastructure.Admin;
@@ -9,6 +10,8 @@ using BabyCareApp.Infrastructure.Audit;
 using BabyCareApp.Infrastructure.Auth;
 using BabyCareApp.Infrastructure.Authorization;
 using BabyCareApp.Infrastructure.Persistence;
+using BabyCareApp.Infrastructure.Preschool;
+using BabyCareApp.Infrastructure.Storage;
 using BabyCareApp.Infrastructure.Subscriptions;
 using BabyCareApp.Infrastructure.Tenancy;
 using Microsoft.EntityFrameworkCore;
@@ -41,6 +44,10 @@ public static class DependencyInjection
         services.AddScoped<IAdminService, AdminService>();
         services.AddScoped<ISubscriptionService, SubscriptionService>();
         services.AddScoped<ITenantService, TenantService>();
+
+        services.Configure<SupabaseStorageOptions>(configuration.GetSection(SupabaseStorageOptions.SectionName));
+        services.AddHttpClient<IFileStorageService, SupabaseStorageService>();
+        services.AddScoped<IPreschoolProfileService, PreschoolProfileService>();
 
         return services;
     }

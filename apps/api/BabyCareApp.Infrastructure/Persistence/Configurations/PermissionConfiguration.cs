@@ -37,6 +37,8 @@ public static class SystemPermissions
     public static readonly Guid BranchesWrite = Guid.Parse("00000000-0000-0000-0000-000000000104");
     public static readonly Guid SubscriptionRead = Guid.Parse("00000000-0000-0000-0000-000000000105");
     public static readonly Guid SubscriptionWrite = Guid.Parse("00000000-0000-0000-0000-000000000106");
+    public static readonly Guid DocumentsRead = Guid.Parse("00000000-0000-0000-0000-000000000107");
+    public static readonly Guid DocumentsWrite = Guid.Parse("00000000-0000-0000-0000-000000000108");
 
     public static readonly Permission[] All =
     [
@@ -46,5 +48,7 @@ public static class SystemPermissions
         new() { Id = BranchesWrite, Key = "branches.write", Category = "Tenant", Description = "Create and update the organisation's branches." },
         new() { Id = SubscriptionRead, Key = "subscription.read", Category = "Subscription", Description = "View the organisation's own SaaS subscription." },
         new() { Id = SubscriptionWrite, Key = "subscription.write", Category = "Subscription", Description = "Subscribe, change plan, or cancel the organisation's own SaaS subscription." },
+        new() { Id = DocumentsRead, Key = "documents.read", Category = "Tenant", Description = "View the organisation's school documents." },
+        new() { Id = DocumentsWrite, Key = "documents.write", Category = "Tenant", Description = "Upload or delete the organisation's school documents." },
     ];
 }

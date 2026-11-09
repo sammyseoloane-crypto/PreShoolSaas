@@ -48,5 +48,7 @@ public static class SystemRolePermissions
         new() { RoleId = SystemRoles.SchoolAdministratorId, PermissionId = SystemPermissions.BranchesRead },
         new() { RoleId = SystemRoles.PreschoolOwnerId, PermissionId = SystemPermissions.SubscriptionRead },
         new() { RoleId = SystemRoles.PreschoolOwnerId, PermissionId = SystemPermissions.SubscriptionWrite },
+        new() { RoleId = SystemRoles.PreschoolOwnerId, PermissionId = SystemPermissions.DocumentsRead },
+        new() { RoleId = SystemRoles.PreschoolOwnerId, PermissionId = SystemPermissions.DocumentsWrite },
     ];
 }

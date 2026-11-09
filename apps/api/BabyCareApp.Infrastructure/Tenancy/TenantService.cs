@@ -102,6 +102,10 @@ public partial class TenantService : ITenantService
             ?? throw new NotFoundException("Tenant not found.");
 
         tenant.Name = request.Name.Trim();
+        tenant.Description = request.Description?.Trim();
+        tenant.ContactEmail = request.ContactEmail?.Trim();
+        tenant.ContactPhone = request.ContactPhone?.Trim();
+        tenant.Website = request.Website?.Trim();
         await _db.SaveChangesAsync(cancellationToken);
 
         return ToResponse(tenant);
@@ -111,10 +115,11 @@ public partial class TenantService : ITenantService
     {
         var tenantId = RequireTenantId();
 
-        return await _db.Branches
+        var branches = await _db.Branches
             .Where(b => b.TenantId == tenantId)
-            .Select(b => new BranchResponse(b.Id, b.Name, b.IsMainBranch, b.IsActive))
             .ToListAsync(cancellationToken);
+
+        return branches.Select(ToBranchResponse).ToList();
     }
 
     public async Task<BranchResponse> CreateBranchAsync(
@@ -135,17 +140,28 @@ public partial class TenantService : ITenantService
             }
         }
 
-        var branch = new Branch { Name = request.Name.Trim(), IsActive = true };
+        var branch = new Branch
+        {
+            Name = request.Name.Trim(),
+            IsActive = true,
+            AddressLine = request.AddressLine?.Trim(),
+            City = request.City?.Trim(),
+            Province = request.Province?.Trim(),
+            PostalCode = request.PostalCode?.Trim(),
+            Country = request.Country?.Trim() ?? "South Africa",
+            ContactEmail = request.ContactEmail?.Trim(),
+            ContactPhone = request.ContactPhone?.Trim(),
+        };
         _db.Branches.Add(branch);
         await _db.SaveChangesAsync(cancellationToken);
 
-        return new BranchResponse(branch.Id, branch.Name, branch.IsMainBranch, branch.IsActive);
+        return ToBranchResponse(branch);
     }
 
     public async Task<BranchResponse> GetBranchAsync(Guid branchId, CancellationToken cancellationToken = default)
     {
         var branch = await FindOwnedBranchAsync(branchId, cancellationToken);
-        return new BranchResponse(branch.Id, branch.Name, branch.IsMainBranch, branch.IsActive);
+        return ToBranchResponse(branch);
     }
 
     public async Task<BranchResponse> UpdateBranchAsync(
@@ -155,9 +171,16 @@ public partial class TenantService : ITenantService
 
         branch.Name = request.Name.Trim();
         branch.IsActive = request.IsActive;
+        branch.AddressLine = request.AddressLine?.Trim();
+        branch.City = request.City?.Trim();
+        branch.Province = request.Province?.Trim();
+        branch.PostalCode = request.PostalCode?.Trim();
+        branch.Country = request.Country?.Trim();
+        branch.ContactEmail = request.ContactEmail?.Trim();
+        branch.ContactPhone = request.ContactPhone?.Trim();
         await _db.SaveChangesAsync(cancellationToken);
 
-        return new BranchResponse(branch.Id, branch.Name, branch.IsMainBranch, branch.IsActive);
+        return ToBranchResponse(branch);
     }
 
     /// <summary>
@@ -179,8 +202,14 @@ public partial class TenantService : ITenantService
         _tenantContext.TenantId ?? throw new TenantRequiredException(
             "This operation requires a resolved tenant — send a valid X-Tenant-Id header for a tenant you belong to.");
 
-    private static TenantResponse ToResponse(Tenant tenant) =>
-        new(tenant.Id, tenant.Name, tenant.Slug, tenant.Status);
+    private static TenantResponse ToResponse(Tenant tenant) => new(
+        tenant.Id, tenant.Name, tenant.Slug, tenant.Status,
+        tenant.Description, tenant.ContactEmail, tenant.ContactPhone, tenant.Website, tenant.LogoUrl);
+
+    private static BranchResponse ToBranchResponse(Branch branch) => new(
+        branch.Id, branch.Name, branch.IsMainBranch, branch.IsActive,
+        branch.AddressLine, branch.City, branch.Province, branch.PostalCode, branch.Country,
+        branch.ContactEmail, branch.ContactPhone);
 
     private async Task<string> ResolveUniqueSlugAsync(string source, CancellationToken cancellationToken)
     {

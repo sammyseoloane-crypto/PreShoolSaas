@@ -19,6 +19,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
+    // Several DTOs share a short name across namespaces (e.g. Admin.SubscriptionResponse
+    // vs Subscriptions.SubscriptionResponse) — default schema IDs collide on short name.
+    options.CustomSchemaIds(type => type.FullName);
+
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",

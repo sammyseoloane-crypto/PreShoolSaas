@@ -18,5 +18,11 @@ public class TenantConfiguration : IEntityTypeConfiguration<Tenant>
         builder.HasIndex(t => t.Slug).IsUnique();
 
         builder.Property(t => t.Status).HasConversion<string>().HasMaxLength(30);
+
+        builder.Property(t => t.Description).HasMaxLength(2000);
+        builder.Property(t => t.ContactEmail).HasMaxLength(320);
+        builder.Property(t => t.ContactPhone).HasMaxLength(50);
+        builder.Property(t => t.Website).HasMaxLength(500);
+        builder.Property(t => t.LogoUrl).HasMaxLength(500);
     }
 }

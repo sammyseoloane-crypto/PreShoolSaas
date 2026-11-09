@@ -28,6 +28,9 @@ public class ApplicationDbContext : DbContext
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
     public DbSet<PasswordResetToken> PasswordResetTokens => Set<PasswordResetToken>();
+    public DbSet<BranchOperatingHours> BranchOperatingHours => Set<BranchOperatingHours>();
+    public DbSet<BranchFacility> BranchFacilities => Set<BranchFacility>();
+    public DbSet<SchoolDocument> SchoolDocuments => Set<SchoolDocument>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
