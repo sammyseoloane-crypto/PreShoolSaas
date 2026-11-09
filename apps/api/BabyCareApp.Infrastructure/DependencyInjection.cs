@@ -1,4 +1,6 @@
 using BabyCareApp.Application.Abstractions;
+using BabyCareApp.Application.Auth;
+using BabyCareApp.Infrastructure.Auth;
 using BabyCareApp.Infrastructure.Persistence;
 using BabyCareApp.Infrastructure.Tenancy;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +23,11 @@ public static class DependencyInjection
         services.AddDbContext<ApplicationDbContext>((sp, options) =>
             options.UseNpgsql(connectionString)
                 .AddInterceptors(sp.GetRequiredService<TenantConnectionInterceptor>()));
+
+        services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
+        services.AddSingleton<IJwtTokenService, JwtTokenService>();
+        services.AddSingleton<IPasswordHasher, PasswordHasher>();
+        services.AddScoped<IAuthService, AuthService>();
 
         return services;
     }

@@ -26,6 +26,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<SubscriptionPlan> SubscriptionPlans => Set<SubscriptionPlan>();
     public DbSet<Subscription> Subscriptions => Set<Subscription>();
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+    public DbSet<PasswordResetToken> PasswordResetTokens => Set<PasswordResetToken>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -97,6 +97,40 @@ namespace BabyCareApp.Infrastructure.Persistence.Migrations
                     b.ToTable("branches", (string)null);
                 });
 
+            modelBuilder.Entity("BabyCareApp.Domain.Entities.PasswordResetToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("TokenHash")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTimeOffset?>("UsedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TokenHash")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("password_reset_tokens", (string)null);
+                });
+
             modelBuilder.Entity("BabyCareApp.Domain.Entities.Permission", b =>
                 {
                     b.Property<Guid>("Id")
@@ -124,6 +158,43 @@ namespace BabyCareApp.Infrastructure.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("permissions", (string)null);
+                });
+
+            modelBuilder.Entity("BabyCareApp.Domain.Entities.RefreshToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("ReplacedByTokenId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("RevokedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("TokenHash")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TokenHash")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("refresh_tokens", (string)null);
                 });
 
             modelBuilder.Entity("BabyCareApp.Domain.Entities.Role", b =>
@@ -453,6 +524,28 @@ namespace BabyCareApp.Infrastructure.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("BabyCareApp.Domain.Entities.PasswordResetToken", b =>
+                {
+                    b.HasOne("BabyCareApp.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("BabyCareApp.Domain.Entities.RefreshToken", b =>
+                {
+                    b.HasOne("BabyCareApp.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BabyCareApp.Domain.Entities.Role", b =>
